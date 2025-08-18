@@ -1,0 +1,422 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Dashboard - Rudraksha: The Saviour</title>
+    <link rel="stylesheet" href="css/user-dashboard.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="dashboard-container">
+        <!-- Sidebar Navigation -->
+        <nav class="sidebar">
+            <div class="sidebar-header">
+                <div class="logo">
+                    <div class="logo-icon">
+                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                            <path d="M12 2L2 7L12 12L22 7L12 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 17L12 22L22 17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        </svg>
+                    </div>
+                    <h2>Rudraksha</h2>
+                </div>
+            </div>
+            
+            <ul class="nav-menu">
+                <li class="nav-item active" data-section="overview">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <rect x="3" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="14" y="3" width="7" height="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="14" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <rect x="3" y="14" width="7" height="7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Overview</span>
+                </li>
+                <li class="nav-item" data-section="scanner">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>URL Scanner</span>
+                </li>
+                <li class="nav-item" data-section="history">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M12 8V12L15 15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Scan History</span>
+                </li>
+                <li class="nav-item" data-section="reports">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M14 2H6A2 2 0 0 0 4 4V20A2 2 0 0 0 6 22H18A2 2 0 0 0 20 20V8L14 2Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="14,2 14,8 20,8" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="16" y1="13" x2="8" y2="13" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="16" y1="17" x2="8" y2="17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="10,9 9,9 8,9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Reports</span>
+                </li>
+                <li class="nav-item" data-section="preferences">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M19.4 15A1.65 1.65 0 0 0 20 14A1.65 1.65 0 0 0 19.4 13L19.1 12.7A1.65 1.65 0 0 0 18.7 12.3A1.65 1.65 0 0 0 18.3 12.3A1.65 1.65 0 0 0 17.9 12.7L17.6 13A1.65 1.65 0 0 0 17 14A1.65 1.65 0 0 0 17.6 15L17.9 15.3A1.65 1.65 0 0 0 18.3 15.7A1.65 1.65 0 0 0 18.7 15.7A1.65 1.65 0 0 0 19.1 15.3L19.4 15Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 15V17" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M12 7V9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M9 12H7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <path d="M17 12H15" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Preferences</span>
+                </li>
+            </ul>
+            
+            <div class="sidebar-footer">
+                <button class="logout-btn" onclick="logout()">
+                    <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M9 21H5A2 2 0 0 1 3 19V5A2 2 0 0 1 5 3H9" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <polyline points="16,17 21,12 16,7" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                        <line x1="21" y1="12" x2="9" y2="12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                    <span>Logout</span>
+                </button>
+            </div>
+        </nav>
+
+        <!-- Main Content Area -->
+        <main class="main-content">
+            <!-- Top Header -->
+            <header class="top-header">
+                <div class="header-left">
+                    <h1 id="pageTitle">Dashboard Overview</h1>
+                    <p id="pageDescription">Monitor your personal security status and activities</p>
+                </div>
+                <div class="header-right">
+                    <div class="user-info">
+                        <div class="user-avatar">
+                            <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M20 21V19C20 17.9391 19.5786 16.9217 18.8284 16.1716C18.0783 15.4214 17.0609 15 16 15H8C6.93913 15 5.92172 15.4214 5.17157 16.1716C4.42143 16.9217 4 17.9391 4 19V21" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                <circle cx="12" cy="7" r="4" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                            </svg>
+                        </div>
+                        <div class="user-details">
+                            <span class="user-name">Aarav Verma</span>
+                            <span class="user-role">Standard User</span>
+                        </div>
+                    </div>
+                </div>
+            </header>
+
+            <!-- Content Sections -->
+            <div class="content-wrapper">
+                <!-- Overview Section -->
+                <section id="overview" class="content-section active">
+                    <div class="stats-grid">
+                        <div class="stat-card">
+                            <div class="stat-icon scan-icon">🔍</div>
+                            <div class="stat-content">
+                                <h3>Total Scans</h3>
+                                <p class="stat-number">47</p>
+                                <span class="stat-change positive">+5 this week</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon threat-icon">🛡️</div>
+                            <div class="stat-content">
+                                <h3>Threats Detected</h3>
+                                <p class="stat-number">3</p>
+                                <span class="stat-change neutral">Last: 2 days ago</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon safe-icon">✅</div>
+                            <div class="stat-content">
+                                <h3>Safe URLs</h3>
+                                <p class="stat-number">44</p>
+                                <span class="stat-change positive">93.6% success rate</span>
+                            </div>
+                        </div>
+                        <div class="stat-card">
+                            <div class="stat-icon time-icon">⏱️</div>
+                            <div class="stat-content">
+                                <h3>Last Scan</h3>
+                                <p class="stat-number">2h ago</p>
+                                <span class="stat-change neutral">google.com</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="quick-actions">
+                        <h3>Quick Actions</h3>
+                        <div class="actions-grid">
+                            <button class="action-card" onclick="quickScan()">
+                                <div class="action-icon">🔍</div>
+                                <h4>Quick Scan</h4>
+                                <p>Scan a URL for threats</p>
+                            </button>
+                            <button class="action-card" onclick="generateReport()">
+                                <div class="action-icon">📊</div>
+                                <h4>Generate Report</h4>
+                                <p>Create security summary</p>
+                            </button>
+                            <button class="action-card" onclick="viewHistory()">
+                                <div class="action-icon">📋</div>
+                                <h4>View History</h4>
+                                <p>Check previous scans</p>
+                            </button>
+                            <button class="action-card" onclick="updatePreferences()">
+                                <div class="action-icon">⚙️</div>
+                                <h4>Preferences</h4>
+                                <p>Customize settings</p>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div class="recent-scans">
+                        <h3>Recent Scans</h3>
+                        <div class="scans-list">
+                            <div class="scan-item safe">
+                                <div class="scan-icon">✅</div>
+                                <div class="scan-content">
+                                    <h4>google.com</h4>
+                                    <p>Safe - No threats detected</p>
+                                    <span class="scan-time">2 hours ago</span>
+                                </div>
+                            </div>
+                            <div class="scan-item threat">
+                                <div class="scan-icon">⚠️</div>
+                                <div class="scan-content">
+                                    <h4>suspicious-site.net</h4>
+                                    <p>Medium threat - Phishing attempt detected</p>
+                                    <span class="scan-time">1 day ago</span>
+                                </div>
+                            </div>
+                            <div class="scan-item safe">
+                                <div class="scan-icon">✅</div>
+                                <div class="scan-content">
+                                    <h4>github.com</h4>
+                                    <p>Safe - No threats detected</p>
+                                    <span class="scan-time">2 days ago</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- URL Scanner Section -->
+                <section id="scanner" class="content-section">
+                    <div class="section-header">
+                        <h2>URL Scanner</h2>
+                        <p>Check any URL for potential phishing threats and security risks</p>
+                    </div>
+                    
+                    <div class="scanner-container">
+                        <div class="scanner-form">
+                            <div class="input-group">
+                                <label for="urlInput">Enter URL to scan:</label>
+                                <div class="url-input-container">
+                                    <input 
+                                        type="url" 
+                                        id="urlInput" 
+                                        placeholder="https://example.com"
+                                        required
+                                    >
+                                    <button class="scan-btn" onclick="scanURL()">
+                                        <svg viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                            <path d="M21 21L16.65 16.65M19 11C19 15.4183 15.4183 19 11 19C6.58172 19 3 15.4183 3 11C3 6.58172 6.58172 3 11 3C15.4183 3 19 6.58172 19 11Z" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                                        </svg>
+                                        Scan
+                                    </button>
+                                </div>
+                            </div>
+                            
+                            <div class="scan-options">
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="deepScan" checked>
+                                    <span class="checkmark"></span>
+                                    Deep scan (more thorough but slower)
+                                </label>
+                                <label class="checkbox-container">
+                                    <input type="checkbox" id="saveHistory" checked>
+                                    <span class="checkmark"></span>
+                                    Save to scan history
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="scan-results" id="scanResults" style="display: none;">
+                            <h3>Scan Results</h3>
+                            <div class="result-content" id="resultContent">
+                                <!-- Results will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Scan History Section -->
+                <section id="history" class="content-section">
+                    <div class="section-header">
+                        <h2>Scan History</h2>
+                        <div class="history-filters">
+                            <select id="statusFilter">
+                                <option value="all">All Results</option>
+                                <option value="safe">Safe</option>
+                                <option value="threat">Threats</option>
+                                <option value="suspicious">Suspicious</option>
+                            </select>
+                            <select id="dateFilter">
+                                <option value="7">Last 7 days</option>
+                                <option value="30" selected>Last 30 days</option>
+                                <option value="90">Last 90 days</option>
+                                <option value="all">All time</option>
+                            </select>
+                        </div>
+                    </div>
+                    
+                    <div class="history-table">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>URL</th>
+                                    <th>Result</th>
+                                    <th>Scan Date</th>
+                                    <th>Threat Level</th>
+                                    <th>Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="historyTableBody">
+                                <!-- History will be populated by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </section>
+
+                <!-- Reports Section -->
+                <section id="reports" class="content-section">
+                    <div class="section-header">
+                        <h2>Security Reports</h2>
+                        <button class="btn btn-primary" onclick="generateNewReport()">Generate New Report</button>
+                    </div>
+                    
+                    <div class="reports-grid">
+                        <div class="report-card">
+                            <div class="report-header">
+                                <h3>Monthly Security Summary</h3>
+                                <span class="report-date">January 2025</span>
+                            </div>
+                            <div class="report-stats">
+                                <div class="report-stat">
+                                    <span class="stat-label">Total Scans</span>
+                                    <span class="stat-value">47</span>
+                                </div>
+                                <div class="report-stat">
+                                    <span class="stat-label">Threats Detected</span>
+                                    <span class="stat-value">3</span>
+                                </div>
+                                <div class="report-stat">
+                                    <span class="stat-label">Success Rate</span>
+                                    <span class="stat-value">93.6%</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="downloadReport('monthly')">Download PDF</button>
+                        </div>
+                        
+                        <div class="report-card">
+                            <div class="report-header">
+                                <h3>Weekly Activity Report</h3>
+                                <span class="report-date">Week 2, Jan 2025</span>
+                            </div>
+                            <div class="report-stats">
+                                <div class="report-stat">
+                                    <span class="stat-label">Scans This Week</span>
+                                    <span class="stat-value">12</span>
+                                </div>
+                                <div class="report-stat">
+                                    <span class="stat-label">New Threats</span>
+                                    <span class="stat-value">1</span>
+                                </div>
+                                <div class="report-stat">
+                                    <span class="stat-label">Most Scanned</span>
+                                    <span class="stat-value">google.com</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" onclick="downloadReport('weekly')">Download PDF</button>
+                        </div>
+                    </div>
+                </section>
+
+                <!-- Preferences Section -->
+                <section id="preferences" class="content-section">
+                    <div class="section-header">
+                        <h2>User Preferences</h2>
+                        <button class="btn btn-primary" onclick="savePreferences()">Save Changes</button>
+                    </div>
+                    
+                    <div class="preferences-grid">
+                        <div class="preference-group">
+                            <h3>Scanning Preferences</h3>
+                            <div class="preference-item">
+                                <label>Default scan depth</label>
+                                <select id="defaultScanDepth">
+                                    <option value="quick">Quick scan</option>
+                                    <option value="standard" selected>Standard scan</option>
+                                    <option value="deep">Deep scan</option>
+                                </select>
+                            </div>
+                            <div class="preference-item">
+                                <label>Auto-save scan history</label>
+                                <input type="checkbox" id="autoSaveHistory" checked>
+                            </div>
+                            <div class="preference-item">
+                                <label>Show scan notifications</label>
+                                <input type="checkbox" id="showNotifications" checked>
+                            </div>
+                        </div>
+                        
+                        <div class="preference-group">
+                            <h3>Security Settings</h3>
+                            <div class="preference-item">
+                                <label>Threat alert level</label>
+                                <select id="threatAlertLevel">
+                                    <option value="low">Low (only high threats)</option>
+                                    <option value="medium" selected>Medium (medium and high)</option>
+                                    <option value="high">High (all threats)</option>
+                                </select>
+                            </div>
+                            <div class="preference-item">
+                                <label>Email security alerts</label>
+                                <input type="checkbox" id="emailAlerts">
+                            </div>
+                            <div class="preference-item">
+                                <label>Auto-block suspicious URLs</label>
+                                <input type="checkbox" id="autoBlockSuspicious">
+                            </div>
+                        </div>
+                        
+                        <div class="preference-group">
+                            <h3>Interface Settings</h3>
+                            <div class="preference-item">
+                                <label>Theme</label>
+                                <select id="theme">
+                                    <option value="light" selected>Light</option>
+                                    <option value="dark">Dark</option>
+                                    <option value="auto">Auto</option>
+                                </select>
+                            </div>
+                            <div class="preference-item">
+                                <label>Language</label>
+                                <select id="language">
+                                    <option value="en" selected>English</option>
+                                    <option value="es">Spanish</option>
+                                    <option value="fr">French</option>
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                </section>
+            </div>
+        </main>
+    </div>
+
+    <script src="js/user-dashboard.js"></script>
+</body>
+</html>
