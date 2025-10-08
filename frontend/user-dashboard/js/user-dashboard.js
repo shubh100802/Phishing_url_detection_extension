@@ -1,8 +1,38 @@
 // User Dashboard JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    ensureAuthenticated();
+    applyUserHeader();
     initializeDashboard();
     loadSampleData();
 });
+
+// Read current user from localStorage
+function getCurrentUser() {
+    try {
+        const raw = localStorage.getItem('currentUser');
+        return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+}
+
+// Require auth for dashboard
+function ensureAuthenticated() {
+    const user = getCurrentUser();
+    const token = localStorage.getItem('accessToken');
+    if (!user || !token) {
+        // Not logged in
+        window.location.href = '../userlogin.html';
+    }
+}
+
+// Populate user header with real name/role
+function applyUserHeader() {
+    const user = getCurrentUser();
+    if (!user) return;
+    const nameEl = document.querySelector('.user-details .user-name');
+    const roleEl = document.querySelector('.user-details .user-role');
+    if (nameEl) nameEl.textContent = user.name || user.email || 'User';
+    if (roleEl) roleEl.textContent = user.role === 'admin' ? 'Administrator' : 'Standard User';
+}
 
 // Initialize dashboard functionality
 function initializeDashboard() {
@@ -617,12 +647,19 @@ function showNotification(message, type = 'info') {
 
 // Logout function
 function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        showNotification('Logging out...', 'info');
-        setTimeout(() => {
-            window.location.href = '../userlogin.html';
-        }, 1000);
-    }
+    if (!confirm('Are you sure you want to logout?')) return;
+    showNotification('Logging out...', 'info');
+    try {
+        // Clear auth and remembered creds
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('user_email');
+        localStorage.removeItem('user_password');
+        localStorage.removeItem('user_remember');
+    } catch {}
+    setTimeout(() => {
+        window.location.href = '../userlogin.html';
+    }, 500);
 }
 
 // Add CSS for scan results and statuses

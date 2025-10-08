@@ -6,11 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('password');
     const rememberCheckbox = document.getElementById('remember');
 
-    // Dummy user credentials (in real app, this would be handled by backend)
-    const DUMMY_CREDENTIALS = {
-        email: 'user@example.com',
-        password: 'user123'
-    };
+    // Backend API bases (tries port from query ?port=, then 3001, then 3000)
+    const API_PORTS = [Number(location.search.match(/port=(\d+)/)?.[1]) || null, 3001, 3000].filter(Boolean);
+    const API_BASES = API_PORTS.map(p => `http://localhost:${p}`);
 
     // Load saved credentials if "Remember me" was checked
     loadSavedCredentials();
@@ -53,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Login function
-    function handleLogin() {
+    async function handleLogin() {
         const email = emailInput.value.trim();
         const password = passwordInput.value.trim();
         const remember = rememberCheckbox.checked;
@@ -73,41 +71,64 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading state
         setLoadingState(true);
 
-        // Simulate API call delay
-        setTimeout(() => {
-            if (validateCredentials(email, password)) {
-                // Save credentials if remember me is checked
-                if (remember) {
-                    saveCredentials(email, password);
-                } else {
-                    clearSavedCredentials();
-                }
+        try {
+            const payload = { email, password };
+            const res = await tryFetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                credentials: 'include'
+            });
 
-                // Show success animation
-                showSuccessAnimation();
-                
-                // Redirect to user dashboard after delay
-                setTimeout(() => {
-                    window.location.href = 'user-dashboard/index.html';
-                }, 1500);
-            } else {
-                setLoadingState(false);
-                showError('Invalid email or password. Please try again.');
-                
-                // Add shake animation to form
-                loginForm.classList.add('shake');
-                setTimeout(() => {
-                    loginForm.classList.remove('shake');
-                }, 500);
+            if (!res.ok) {
+                const data = await safeJson(res);
+                throw new Error(data?.message || 'Login failed');
             }
-        }, 1500);
+
+            const data = await res.json();
+            // Save credentials if remember me is checked (email only; not password)
+            if (remember) {
+                saveCredentials(email, '');
+            } else {
+                clearSavedCredentials();
+            }
+
+            // Persist auth
+            try {
+                localStorage.setItem('accessToken', data.accessToken);
+                localStorage.setItem('currentUser', JSON.stringify(data.user));
+            } catch {}
+
+            // Show success animation and redirect
+            showSuccessAnimation();
+            setTimeout(() => {
+                window.location.href = 'user-dashboard/index.html';
+            }, 800);
+        } catch (err) {
+            setLoadingState(false);
+            showError(err.message || 'Invalid email or password. Please try again.');
+            // Add shake animation to form
+            loginForm.classList.add('shake');
+            setTimeout(() => {
+                loginForm.classList.remove('shake');
+            }, 500);
+        }
     }
 
-    // Validate credentials against dummy data
-    function validateCredentials(email, password) {
-        return email === DUMMY_CREDENTIALS.email && 
-               password === DUMMY_CREDENTIALS.password;
+    // Helpers to call backend
+    async function tryFetch(path, options) {
+        let lastErr;
+        for (const base of API_BASES) {
+            try {
+                const r = await fetch(base + path, options);
+                return r;
+            } catch (e) {
+                lastErr = e;
+            }
+        }
+        throw lastErr || new Error('Network error');
     }
+    async function safeJson(res) { try { return await res.json(); } catch { return null; } }
 
     // Email validation
     function isValidEmail(email) {
@@ -527,8 +548,8 @@ function closeModal() {
 }
 
 function showSignup() {
-    // Show signup information (could be expanded)
-    alert('Sign up functionality coming soon!\nFor now, use:\nEmail: user@example.com\nPassword: user123');
+    // Navigate to the new signup page
+    window.location.href = 'usersignup.html';
 }
 
 // showHelp function removed - now redirects to developers page

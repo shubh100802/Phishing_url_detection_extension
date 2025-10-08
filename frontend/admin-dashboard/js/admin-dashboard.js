@@ -1,8 +1,35 @@
 // Admin Dashboard JavaScript
 document.addEventListener('DOMContentLoaded', function() {
+    ensureAuthenticated();
+    applyAdminHeader();
     initializeDashboard();
     loadSampleData();
 });
+
+function getCurrentUser() {
+    try {
+        const raw = localStorage.getItem('currentUser');
+        return raw ? JSON.parse(raw) : null;
+    } catch { return null; }
+}
+
+function ensureAuthenticated() {
+    const user = getCurrentUser();
+    const token = localStorage.getItem('accessToken');
+    if (!user || !token || user.role !== 'admin') {
+        // Not logged in or not admin
+        window.location.href = '../adminlogin.html';
+    }
+}
+
+function applyAdminHeader() {
+    const user = getCurrentUser();
+    if (!user) return;
+    const nameEl = document.querySelector('.admin-details .admin-name');
+    const roleEl = document.querySelector('.admin-details .admin-role');
+    if (nameEl) nameEl.textContent = user.name || user.username || user.email || 'Admin';
+    if (roleEl) roleEl.textContent = 'System Admin';
+}
 
 // Initialize dashboard functionality
 function initializeDashboard() {
@@ -338,12 +365,18 @@ function showNotification(message, type = 'info') {
 
 // Logout function
 function logout() {
-    if (confirm('Are you sure you want to logout?')) {
-        showNotification('Logging out...', 'info');
-        setTimeout(() => {
-            window.location.href = '../adminlogin.html';
-        }, 1000);
-    }
+    if (!confirm('Are you sure you want to logout?')) return;
+    showNotification('Logging out...', 'info');
+    try {
+        localStorage.removeItem('accessToken');
+        localStorage.removeItem('currentUser');
+        localStorage.removeItem('admin_username');
+        localStorage.removeItem('admin_password');
+        localStorage.removeItem('admin_remember');
+    } catch {}
+    setTimeout(() => {
+        window.location.href = '../adminlogin.html';
+    }, 500);
 }
 
 // Add CSS for threat levels and statuses

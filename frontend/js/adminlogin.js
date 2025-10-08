@@ -6,11 +6,9 @@ document.addEventListener('DOMContentLoaded', function() {
     const passwordInput = document.getElementById('password');
     const rememberCheckbox = document.getElementById('remember');
 
-    // Dummy admin credentials (in real app, this would be handled by backend)
-    const DUMMY_CREDENTIALS = {
-        username: 'admin',
-        password: 'admin123'
-    };
+    // Backend API bases (tries port from query ?port=, then 3001, then 3000)
+    const API_PORTS = [Number(location.search.match(/port=(\d+)/)?.[1]) || null, 3001, 3000].filter(Boolean);
+    const API_BASES = API_PORTS.map(p => `http://localhost:${p}`);
 
     // Load saved credentials if "Remember me" was checked
     loadSavedCredentials();
@@ -53,7 +51,7 @@ document.addEventListener('DOMContentLoaded', function() {
     });
 
     // Login function
-    function handleLogin() {
+    async function handleLogin() {
         const username = usernameInput.value.trim();
         const password = passwordInput.value.trim();
         const remember = rememberCheckbox.checked;
@@ -67,41 +65,62 @@ document.addEventListener('DOMContentLoaded', function() {
         // Show loading state
         setLoadingState(true);
 
-        // Simulate API call delay
-        setTimeout(() => {
-            if (validateCredentials(username, password)) {
-                // Save credentials if remember me is checked
-                if (remember) {
-                    saveCredentials(username, password);
-                } else {
-                    clearSavedCredentials();
-                }
+        try {
+            const payload = { username, password };
+            const res = await tryFetch('/api/auth/login', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify(payload),
+                credentials: 'include'
+            });
 
-                // Show success animation
-                showSuccessAnimation();
-                
-                // Redirect to admin dashboard after delay
-                setTimeout(() => {
-                    window.location.href = 'admin-dashboard/index.html';
-                }, 1500);
-            } else {
-                setLoadingState(false);
-                showError('Invalid username or password. Please try again.');
-                
-                // Add shake animation to form
-                loginForm.classList.add('shake');
-                setTimeout(() => {
-                    loginForm.classList.remove('shake');
-                }, 500);
+            if (!res.ok) {
+                const data = await safeJson(res);
+                throw new Error(data?.message || 'Login failed');
             }
-        }, 1500);
+
+            const data = await res.json();
+
+            // Remember only the username locally if requested (never store password)
+            if (remember) {
+                saveCredentials(username, '');
+            } else {
+                clearSavedCredentials();
+            }
+
+            // Persist auth
+            try {
+                localStorage.setItem('accessToken', data.accessToken);
+                localStorage.setItem('currentUser', JSON.stringify(data.user));
+            } catch {}
+
+            // Success animation and redirect
+            showSuccessAnimation();
+            setTimeout(() => {
+                window.location.href = 'admin-dashboard/index.html';
+            }, 800);
+        } catch (err) {
+            setLoadingState(false);
+            showError(err.message || 'Login failed');
+            loginForm.classList.add('shake');
+            setTimeout(() => loginForm.classList.remove('shake'), 500);
+        }
     }
 
-    // Validate credentials against dummy data
-    function validateCredentials(username, password) {
-        return username === DUMMY_CREDENTIALS.username && 
-               password === DUMMY_CREDENTIALS.password;
+    // Helpers to call backend
+    async function tryFetch(path, options) {
+        let lastErr;
+        for (const base of API_BASES) {
+            try {
+                const r = await fetch(base + path, options);
+                return r;
+            } catch (e) {
+                lastErr = e;
+            }
+        }
+        throw lastErr || new Error('Network error');
     }
+    async function safeJson(res) { try { return await res.json(); } catch { return null; } }
 
     // Set loading state
     function setLoadingState(loading) {
