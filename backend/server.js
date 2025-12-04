@@ -4,12 +4,14 @@ import helmet from 'helmet';
 import cors from 'cors';
 import morgan from 'morgan';
 import cookieParser from 'cookie-parser';
+import rateLimit from 'express-rate-limit';
 
 import { connectDB } from './config/db.js';
 import healthRouter from './routes/health.js';
 import authRouter from './routes/auth.js';
 import scanRouter from './routes/scan.js';
 import threatsRouter from './routes/threats.js';
+import analyticsRouter from './routes/analytics.js';
 import usersRouter from './routes/users.js';
 import { seedAdmin } from './config/seedAdmin.js';
 
@@ -47,21 +49,38 @@ if (process.env.NODE_ENV !== 'production') {
   app.use(morgan('dev'));
 }
 
-// Connect to MongoDB (non-blocking) and seed admin
+// Connect to MongoDB (non-blocking) and optional seed admin
 connectDB()
   .then(async () => {
-    await seedAdmin();
+    if (String(process.env.SEED_ADMIN || '').toLowerCase() === 'true') {
+      await seedAdmin();
+    }
   })
   .catch((err) => {
     console.error('MongoDB connection failed:', err?.message || err);
   });
 
 // Routes
+// Optional rate limiting (apply globally) if configured
+const windowMs = parseInt(process.env.RATE_LIMIT_WINDOW_MS || '0', 10);
+const maxReq = parseInt(process.env.RATE_LIMIT_MAX_REQUESTS || '0', 10);
+if (windowMs > 0 && maxReq > 0) {
+  app.use(
+    rateLimit({
+      windowMs,
+      max: maxReq,
+      standardHeaders: true,
+      legacyHeaders: false,
+    })
+  );
+}
+
 app.use('/api/health', healthRouter);
 app.use('/api/auth', authRouter);
 app.use('/api/scan', scanRouter);
 app.use('/api/threats', threatsRouter);
 app.use('/api/users', usersRouter);
+app.use('/api/analytics', analyticsRouter);
 
 // 404 handler
 app.use((req, res) => {

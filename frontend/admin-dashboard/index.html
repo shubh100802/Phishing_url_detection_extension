@@ -300,6 +300,86 @@
         </main>
     </div>
 
+    <div id="scanModal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10000;">
+      <div style="max-width:480px; margin:10% auto; background:#111827; color:#fff; padding:1.5rem; border-radius:12px;">
+        <h3 style="margin:0 0 1rem 0;">Scan New URL</h3>
+        <form id="scanForm">
+          <div style="margin-bottom:0.75rem;">
+            <label>URL</label>
+            <input id="scanUrlInput" type="text" placeholder="https://example.com" required style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;" />
+          </div>
+          <div style="display:flex; gap:1rem; margin-bottom:1rem;">
+            <label style="display:flex; align-items:center; gap:0.5rem;"><input id="scanDeepInput" type="checkbox" checked /> Deep scan</label>
+            <label style="display:flex; align-items:center; gap:0.5rem;"><input id="scanSaveInput" type="checkbox" checked /> Save history</label>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button type="button" id="scanCancelBtn" class="btn">Cancel</button>
+            <button type="submit" class="btn btn-primary">Scan</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="threatModal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10000;">
+      <div style="max-width:480px; margin:10% auto; background:#111827; color:#fff; padding:1.5rem; border-radius:12px;">
+        <h3 style="margin:0 0 1rem 0;">Update Threat</h3>
+        <form id="threatForm">
+          <input type="hidden" id="threatIdInput" />
+          <div style="margin-bottom:0.75rem;">
+            <label>Status</label>
+            <select id="threatStatusInput" style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;">
+              <option value="blocked">Blocked</option>
+              <option value="investigating">Investigating</option>
+              <option value="monitored">Monitored</option>
+            </select>
+          </div>
+          <div style="margin-bottom:0.75rem;">
+            <label>Level</label>
+            <select id="threatLevelInput" style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;">
+              <option value="low">Low</option>
+              <option value="medium">Medium</option>
+              <option value="high">High</option>
+            </select>
+          </div>
+          <div style="margin-bottom:0.75rem;">
+            <label>Notes</label>
+            <textarea id="threatNotesInput" rows="3" style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;"></textarea>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button type="button" id="threatCancelBtn" class="btn">Cancel</button>
+            <button type="submit" class="btn btn-primary">Update</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div id="userModal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10000;">
+      <div style="max-width:480px; margin:10% auto; background:#111827; color:#fff; padding:1.5rem; border-radius:12px;">
+        <h3 style="margin:0 0 1rem 0;">Add New User</h3>
+        <form id="userForm">
+          <div style="margin-bottom:0.75rem;">
+            <label>Name</label>
+            <input id="userNameInput" type="text" required style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;" />
+          </div>
+          <div style="margin-bottom:0.75rem;">
+            <label>Email</label>
+            <input id="userEmailInput" type="email" required style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;" />
+          </div>
+          <div style="margin-bottom:0.75rem;">
+            <label>Role</label>
+            <select id="userRoleInput" style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;">
+              <option value="user">User</option>
+              <option value="admin">Admin</option>
+            </select>
+          </div>
+          <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
+            <button type="button" id="userCancelBtn" class="btn">Cancel</button>
+            <button type="submit" class="btn btn-primary">Create</button>
+          </div>
+        </form>
+      </div>
+    </div>
+
     <script src="js/admin-dashboard.js"></script>
 </body>
 </html>

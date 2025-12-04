@@ -4,6 +4,7 @@ document.addEventListener('DOMContentLoaded', function() {
     applyAdminHeader();
     initializeDashboard();
     loadSampleData();
+    initializeModals();
 });
 
 function getCurrentUser() {
@@ -20,6 +21,34 @@ function ensureAuthenticated() {
         // Not logged in or not admin
         window.location.href = '../adminlogin.html';
     }
+}
+
+// Backend API helpers
+const API_BASES = [
+    `http://localhost:${Number(location.search.match(/port=(\d+)/)?.[1]) || 3001}`,
+    'http://localhost:3000'
+];
+
+async function apiFetch(path, options = {}) {
+    const token = localStorage.getItem('accessToken') || '';
+    const headers = Object.assign({ 'Content-Type': 'application/json', 'Authorization': `Bearer ${token}` }, options.headers || {});
+    let lastErr;
+    for (const base of API_BASES) {
+        try {
+            const res = await fetch(base + path, Object.assign({}, options, { headers }));
+            if (res.status === 401) {
+                try {
+                    localStorage.removeItem('accessToken');
+                    localStorage.removeItem('currentUser');
+                } catch {}
+                showNotification('Session expired. Please log in again.', 'error');
+                setTimeout(() => { window.location.href = '../adminlogin.html'; }, 500);
+                return res;
+            }
+            return res;
+        } catch (e) { lastErr = e; }
+    }
+    throw lastErr || new Error('Network error');
 }
 
 function applyAdminHeader() {
@@ -44,6 +73,88 @@ function initializeDashboard() {
 
     // Auto-refresh stats every 30 seconds
     setInterval(refreshStats, 30000);
+}
+
+// Modal helpers and bindings
+function initializeModals() {
+    // Scan modal
+    const scanModal = document.getElementById('scanModal');
+    const scanForm = document.getElementById('scanForm');
+    const scanCancelBtn = document.getElementById('scanCancelBtn');
+    if (scanForm) {
+        scanForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const url = document.getElementById('scanUrlInput').value.trim();
+            const deepScan = document.getElementById('scanDeepInput').checked;
+            const saveHistory = document.getElementById('scanSaveInput').checked;
+            if (!url) return;
+            try {
+                showNotification('Scanning URL: ' + url, 'info');
+                const res = await apiFetch('/api/scan', { method: 'POST', body: JSON.stringify({ url, deepScan, saveHistory }) });
+                if (!res.ok) throw new Error('Scan failed');
+                const data = await res.json();
+                showNotification(`Scan complete: ${data.verdict.toUpperCase()} (risk ${data.riskScore})`, 'success');
+                if (scanModal) scanModal.style.display = 'none';
+                loadThreatsData();
+            } catch {
+                showNotification('URL scan failed', 'error');
+            }
+        });
+    }
+    if (scanCancelBtn) scanCancelBtn.addEventListener('click', () => { if (scanModal) scanModal.style.display = 'none'; });
+
+    // Threat update modal
+    const threatModal = document.getElementById('threatModal');
+    const threatForm = document.getElementById('threatForm');
+    const threatCancelBtn = document.getElementById('threatCancelBtn');
+    if (threatForm) {
+        threatForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const id = document.getElementById('threatIdInput').value;
+            const status = document.getElementById('threatStatusInput').value;
+            const level = document.getElementById('threatLevelInput').value;
+            const notes = document.getElementById('threatNotesInput').value;
+            if (!id) return;
+            try {
+                const res = await apiFetch(`/api/threats/${id}`, { method: 'PATCH', body: JSON.stringify({ status, level, notes }) });
+                if (!res.ok) throw new Error('Update failed');
+                showNotification('Threat updated successfully', 'success');
+                if (threatModal) threatModal.style.display = 'none';
+                loadThreatsData();
+            } catch {
+                showNotification('Failed to update threat', 'error');
+            }
+        });
+    }
+    if (threatCancelBtn) threatCancelBtn.addEventListener('click', () => { if (threatModal) threatModal.style.display = 'none'; });
+
+    // Add user modal
+    const userModal = document.getElementById('userModal');
+    const userForm = document.getElementById('userForm');
+    const userCancelBtn = document.getElementById('userCancelBtn');
+    if (userForm) {
+        userForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            const name = document.getElementById('userNameInput').value.trim();
+            const email = document.getElementById('userEmailInput').value.trim();
+            const role = document.getElementById('userRoleInput').value;
+            if (!name || !email || !role) return;
+            try {
+                const res = await apiFetch('/api/users', { method: 'POST', body: JSON.stringify({ name, email, role }) });
+                if (!res.ok) {
+                    const err = await res.json().catch(() => ({}));
+                    throw new Error(err?.message || 'Create user failed');
+                }
+                showNotification(`User ${name} added successfully`, 'success');
+                if (userModal) userModal.style.display = 'none';
+                userForm.reset();
+                loadUsersData();
+            } catch {
+                showNotification('Failed to add user', 'error');
+            }
+        });
+    }
+    if (userCancelBtn) userCancelBtn.addEventListener('click', () => { if (userModal) userModal.style.display = 'none'; });
 }
 
 // Navigate to different sections
@@ -73,6 +184,11 @@ function navigateToSection(sectionName) {
 
     // Update page title and description
     updatePageHeader(sectionName);
+
+    // Lazy refresh data when switching sections
+    if (sectionName === 'overview') loadOverview();
+    if (sectionName === 'threats') loadThreatsData();
+    if (sectionName === 'users') loadUsersData();
 }
 
 // Update page header based on section
@@ -109,149 +225,147 @@ function updatePageHeader(sectionName) {
     }
 }
 
-// Load sample data for demonstration
 function loadSampleData() {
+    loadOverview();
     loadThreatsData();
     loadUsersData();
 }
 
 // Load threats data
-function loadThreatsData() {
-    const threatsData = [
-        {
-            url: 'malicious-site.com',
-            threatLevel: 'High',
-            detectionDate: '2025-01-15 14:32',
-            status: 'Blocked'
-        },
-        {
-            url: 'phishing-attempt.net',
-            threatLevel: 'Medium',
-            detectionDate: '2025-01-15 13:45',
-            status: 'Under Review'
-        },
-        {
-            url: 'fake-bank-login.org',
-            threatLevel: 'High',
-            detectionDate: '2025-01-15 12:18',
-            status: 'Blocked'
-        },
-        {
-            url: 'suspicious-link.xyz',
-            threatLevel: 'Low',
-            detectionDate: '2025-01-15 11:30',
-            status: 'Monitored'
-        }
-    ];
-
+async function loadThreatsData() {
     const tableBody = document.getElementById('threatsTableBody');
-    if (tableBody) {
+    if (!tableBody) return;
+    tableBody.innerHTML = '<tr><td colspan="5">Loading threats...</td></tr>';
+    try {
+        const res = await apiFetch('/api/threats', { method: 'GET' });
+        if (!res.ok) throw new Error('Failed to load threats');
+        const data = await res.json();
+        const items = Array.isArray(data.items) ? data.items : [];
         tableBody.innerHTML = '';
-        threatsData.forEach(threat => {
+        items.forEach(threat => {
             const row = document.createElement('tr');
+            const level = (threat.level || '').toLowerCase();
+            const status = (threat.status || '').toLowerCase().replace(' ', '-');
+            const detected = threat.detectedAt ? new Date(threat.detectedAt).toLocaleString() : '';
             row.innerHTML = `
                 <td>${threat.url}</td>
-                <td><span class="threat-level ${threat.threatLevel.toLowerCase()}">${threat.threatLevel}</span></td>
-                <td>${threat.detectionDate}</td>
-                <td><span class="status ${threat.status.toLowerCase().replace(' ', '-')}">${threat.status}</span></td>
+                <td><span class="threat-level ${level}">${(threat.level || '').replace(/\b\w/g, c => c.toUpperCase())}</span></td>
+                <td>${detected}</td>
+                <td><span class="status ${status}">${(threat.status || '').replace(/\b\w/g, c => c.toUpperCase())}</span></td>
                 <td>
-                    <button class="btn btn-sm btn-primary" onclick="viewThreatDetails('${threat.url}')">View</button>
-                    <button class="btn btn-sm btn-secondary" onclick="updateThreatStatus('${threat.url}')">Update</button>
+                    <button class="btn btn-sm btn-primary" onclick="viewThreatDetails('${threat._id || ''}')">View</button>
+                    <button class="btn btn-sm btn-secondary" onclick="updateThreatStatus('${threat._id || ''}')">Update</button>
                 </td>
             `;
             tableBody.appendChild(row);
         });
+        if (!items.length) {
+            tableBody.innerHTML = '<tr><td colspan="5">No threats found</td></tr>';
+        }
+    } catch (e) {
+        tableBody.innerHTML = '<tr><td colspan="5">Error loading threats</td></tr>';
+        showNotification('Failed to load threats', 'error');
     }
 }
 
 // Load users data
-function loadUsersData() {
-    const usersData = [
-        {
-            name: 'Priya Patel',
-            email: 'priya.patel@company.com',
-            role: 'User',
-            status: 'Active',
-            lastLogin: '2025-01-15 14:20'
-        },
-        {
-            name: 'Rajesh Kumar',
-            email: 'rajesh.kumar@company.com',
-            role: 'User',
-            status: 'Active',
-            lastLogin: '2025-01-15 13:45'
-        },
-        {
-            name: 'Meera Singh',
-            email: 'meera.singh@company.com',
-            role: 'Moderator',
-            status: 'Active',
-            lastLogin: '2025-01-15 12:30'
-        },
-        {
-            name: 'Vikram Malhotra',
-            email: 'vikram.malhotra@company.com',
-            role: 'User',
-            status: 'Inactive',
-            lastLogin: '2025-01-15 09:15'
-        }
-    ];
-
+async function loadUsersData() {
     const tableBody = document.getElementById('usersTableBody');
-    if (tableBody) {
+    if (!tableBody) return;
+    tableBody.innerHTML = '<tr><td colspan="6">Loading users...</td></tr>';
+    try {
+        const res = await apiFetch('/api/users', { method: 'GET' });
+        if (!res.ok) throw new Error('Failed to load users');
+        const data = await res.json();
+        const items = Array.isArray(data.items) ? data.items : [];
         tableBody.innerHTML = '';
-        usersData.forEach(user => {
+        items.forEach(user => {
+            const role = (user.role || '').toLowerCase();
+            const status = (user.status || '').toLowerCase();
+            const lastLogin = user.updatedAt ? new Date(user.updatedAt).toLocaleString() : '';
             const row = document.createElement('tr');
             row.innerHTML = `
-                <td>${user.name}</td>
-                <td>${user.email}</td>
-                <td><span class="role ${user.role.toLowerCase()}">${user.role}</span></td>
-                <td><span class="status ${user.status.toLowerCase()}">${user.status}</span></td>
-                <td>${user.lastLogin}</td>
+                <td>${user.name || ''}</td>
+                <td>${user.email || ''}</td>
+                <td><span class="role ${role}">${(user.role || '').replace(/\b\w/g, c => c.toUpperCase())}</span></td>
+                <td><span class="status ${status}">${(user.status || '').replace(/\b\w/g, c => c.toUpperCase())}</span></td>
+                <td>${lastLogin}</td>
                 <td>
-                    <button class="btn btn-sm btn-primary" onclick="editUser('${user.email}')">Edit</button>
-                    <button class="btn btn-sm btn-secondary" onclick="viewUserDetails('${user.email}')">View</button>
+                    <button class="btn btn-sm btn-primary" onclick="editUser('${user._id}')">Edit</button>
+                    <button class="btn btn-sm btn-secondary" onclick="viewUserDetails('${user._id}')">View</button>
                 </td>
             `;
             tableBody.appendChild(row);
         });
+        if (!items.length) {
+            tableBody.innerHTML = '<tr><td colspan="6">No users found</td></tr>';
+        }
+    } catch (e) {
+        tableBody.innerHTML = '<tr><td colspan="6">Error loading users</td></tr>';
+        showNotification('Failed to load users', 'error');
     }
 }
 
 // Refresh dashboard stats
 function refreshStats() {
-    // Simulate real-time updates
-    const statNumbers = document.querySelectorAll('.stat-number');
-    statNumbers.forEach(stat => {
-        const currentValue = parseInt(stat.textContent.replace(/,/g, ''));
-        const randomChange = Math.floor(Math.random() * 10) + 1;
-        const newValue = currentValue + randomChange;
-        stat.textContent = newValue.toLocaleString();
-    });
+    // Pull fresh analytics and update overview numbers
+    loadOverview(true);
+}
 
-    // Update activity times
-    const activityTimes = document.querySelectorAll('.activity-time');
-    activityTimes.forEach(timeElement => {
-        const currentText = timeElement.textContent;
-        if (currentText.includes('minutes ago')) {
-            const minutes = parseInt(currentText.match(/\d+/)[0]);
-            if (minutes < 60) {
-                timeElement.textContent = `${minutes + 1} minutes ago`;
+// Load overview analytics
+async function loadOverview(isRefresh = false) {
+    const statsGrid = document.querySelector('#overview .stats-grid');
+    const activityList = document.querySelector('#overview .activity-list');
+    try {
+        const res = await apiFetch('/api/analytics', { method: 'GET' });
+        if (!res.ok) throw new Error('Failed to load analytics');
+        const data = await res.json();
+        const s = data.stats || {};
+
+        // Update stat cards in order: Total Threats, Blocked Attacks, Active Users, Uptime
+        const numbers = document.querySelectorAll('#overview .stat-card .stat-number');
+        if (numbers[0]) numbers[0].textContent = Number(s.totalThreats || 0).toLocaleString();
+        if (numbers[1]) numbers[1].textContent = Number(s.blockedThreats || 0).toLocaleString();
+        if (numbers[2]) numbers[2].textContent = Number(s.activeUsers || 0).toLocaleString();
+        if (numbers[3]) numbers[3].textContent = (s.uptimePercent != null ? s.uptimePercent : 99.9) + '%';
+
+        // Recent activity
+        if (activityList) {
+            activityList.innerHTML = '';
+            const items = Array.isArray(data.activities) ? data.activities : [];
+            if (!items.length) {
+                activityList.innerHTML = '<div class="activity-item"><div class="activity-content"><p>No recent activity</p></div></div>';
+            } else {
+                items.forEach(a => {
+                    const icon = a.type === 'threat' ? '🛡️' : a.type === 'scan' ? '🔎' : 'ℹ️';
+                    const time = a.time ? new Date(a.time).toLocaleString() : '';
+                    const el = document.createElement('div');
+                    el.className = 'activity-item';
+                    el.innerHTML = `
+                        <div class="activity-icon ${a.type}">${icon}</div>
+                        <div class="activity-content">
+                            <h4>${a.title || ''}</h4>
+                            <p>${a.message || ''}</p>
+                            <span class="activity-time">${time}</span>
+                        </div>
+                    `;
+                    activityList.appendChild(el);
+                });
             }
         }
-    });
+    } catch (e) {
+        if (!isRefresh && statsGrid) {
+            // show a minimal inline error state (no alerts to reduce noise)
+        }
+    }
 }
 
 // Threat management functions
 function scanNewURL() {
-    const url = prompt('Enter URL to scan:');
-    if (url) {
-        // Simulate URL scanning
-        showNotification('Scanning URL: ' + url, 'info');
-        setTimeout(() => {
-            showNotification('URL scan completed. No threats detected.', 'success');
-        }, 2000);
-    }
+    const scanModal = document.getElementById('scanModal');
+    const urlInput = document.getElementById('scanUrlInput');
+    if (urlInput) urlInput.value = '';
+    if (scanModal) scanModal.style.display = 'block';
 }
 
 function viewThreatDetails(url) {
@@ -259,26 +373,21 @@ function viewThreatDetails(url) {
     // In a real application, this would open a detailed modal
 }
 
-function updateThreatStatus(url) {
-    const newStatus = prompt(`Update status for ${url} (Blocked/Under Review/Monitored):`);
-    if (newStatus) {
-        showNotification(`Status updated for ${url} to: ${newStatus}`, 'success');
-        // Refresh the threats table
-        loadThreatsData();
-    }
+function updateThreatStatus(id) {
+    const threatModal = document.getElementById('threatModal');
+    const idInput = document.getElementById('threatIdInput');
+    const notesInput = document.getElementById('threatNotesInput');
+    if (idInput) idInput.value = id;
+    if (notesInput) notesInput.value = '';
+    if (threatModal) threatModal.style.display = 'block';
 }
 
 // User management functions
 function addNewUser() {
-    const name = prompt('Enter user name:');
-    const email = prompt('Enter user email:');
-    const role = prompt('Enter user role (User/Moderator/Admin):');
-    
-    if (name && email && role) {
-        showNotification(`User ${name} added successfully`, 'success');
-        // Refresh the users table
-        loadUsersData();
-    }
+    const userModal = document.getElementById('userModal');
+    const form = document.getElementById('userForm');
+    if (form) form.reset();
+    if (userModal) userModal.style.display = 'block';
 }
 
 function editUser(email) {
