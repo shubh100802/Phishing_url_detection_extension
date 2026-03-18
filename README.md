@@ -212,4 +212,6 @@ Serve project root with Live Server (or any static server), typically:
 
 Built for practical phishing protection workflows with extension-first interception and dashboard visibility.
 
+---
+
 Made with ❤️ By Shubh
