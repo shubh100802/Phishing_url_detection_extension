@@ -3,33 +3,31 @@ import bcrypt from 'bcryptjs';
 import { connectDB } from '../config/db.js';
 import User from '../models/User.js';
 
-// One-time maintenance script to reset admin credentials
-// New credentials per request:
-// username: admin@rudraksha.local
-// password: Shubh@1008
-
 dotenv.config();
 
 (async () => {
   try {
     await connectDB();
 
-    const NEW_USERNAME = 'admin@rudraksha.local';
-    const NEW_PASSWORD = 'Shubh@1008';
+    const NEW_USERNAME = process.env.NEW_ADMIN_USERNAME || 'admin';
+    const NEW_EMAIL = process.env.NEW_ADMIN_EMAIL || 'admin@rudraksha.local';
+    const NEW_PASSWORD = process.env.NEW_ADMIN_PASSWORD;
+
+    if (!NEW_PASSWORD || String(NEW_PASSWORD).trim().length < 8) {
+      throw new Error('Set NEW_ADMIN_PASSWORD (min 8 chars) in environment before running resetAdmin.js');
+    }
 
     const rounds = parseInt(process.env.BCRYPT_ROUNDS || '12', 10);
-    const salt = await bcrypt.genSalt(rounds);
-    const hash = await bcrypt.hash(NEW_PASSWORD, salt);
+    const hash = await bcrypt.hash(NEW_PASSWORD, await bcrypt.genSalt(rounds));
 
-    const query = { $or: [ { email: 'admin@rudraksha.local' }, { username: 'admin' } ] };
+    const query = { $or: [{ email: NEW_EMAIL }, { username: NEW_USERNAME }, { role: 'admin' }] };
     let user = await User.findOne(query);
 
     if (!user) {
-      // Create admin if not found
       user = await User.create({
-        name: 'Shubham',
+        name: 'Admin',
         username: NEW_USERNAME,
-        email: 'admin@rudraksha.local',
+        email: NEW_EMAIL,
         password: hash,
         role: 'admin',
         status: 'active',
@@ -37,7 +35,7 @@ dotenv.config();
       console.log('Admin user did not exist. Created a new admin.');
     } else {
       user.username = NEW_USERNAME;
-      user.email = 'admin@rudraksha.local';
+      user.email = NEW_EMAIL;
       user.password = hash;
       user.role = 'admin';
       user.status = 'active';
@@ -45,9 +43,7 @@ dotenv.config();
       console.log('Existing admin updated successfully.');
     }
 
-    console.log('New admin login:');
-    console.log('  username:', NEW_USERNAME);
-    console.log('  password:', NEW_PASSWORD);
+    console.log('Admin credentials reset for:', NEW_USERNAME);
     process.exit(0);
   } catch (err) {
     console.error('Failed to reset admin credentials:', err?.message || err);

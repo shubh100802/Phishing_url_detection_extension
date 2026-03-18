@@ -41,7 +41,7 @@ function initializeCardInteractions() {
     const developerCards = document.querySelectorAll('.developer-card');
     
     developerCards.forEach(card => {
-        const cardWrapper = card.querySelector('.card-3d-wrapper');
+        const cardWrapper = card.querySelector('.card-3d-wrapper') || card;
         
         // Mouse move effect for 3D tilt
         card.addEventListener('mousemove', function(e) {
@@ -424,7 +424,8 @@ const focusStyles = `
         transform: scale(1.05);
     }
     
-    .developer-card.focused .card-3d-wrapper {
+    .developer-card.focused .card-3d-wrapper,
+    .developer-card.focused {
         transform: perspective(1000px) rotateX(5deg) rotateY(5deg) scale(1.05);
     }
 `;

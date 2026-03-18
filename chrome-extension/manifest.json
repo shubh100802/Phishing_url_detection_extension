@@ -1,49 +1,22 @@
 {
   "manifest_version": 3,
-  "name": "PhishGuard - Phishing Detection",
-  "version": "1.0.0",
-  "description": "Real-time phishing detection and protection for your browsing safety",
-  "permissions": [
-    "activeTab",
-    "storage",
-    "webRequest",
-    "tabs",
-    "notifications"
-  ],
-  "host_permissions": [
-    "http://*/*",
-    "https://*/*"
-  ],
+  "name": "RUDRAKSHA - Phishing Detection",
+  "version": "1.1.0",
+  "description": "Quick phishing URL scanning with RUDRAKSHA backend.",
+  "permissions": ["activeTab", "tabs", "storage", "notifications"],
+  "host_permissions": ["http://localhost:3000/*", "http://localhost:3001/*", "https://*/*", "http://*/*"],
   "background": {
     "service_worker": "background.js"
   },
-  "content_scripts": [
-    {
-      "matches": ["<all_urls>"],
-      "js": ["content.js"],
-      "run_at": "document_start"
-    }
-  ],
   "action": {
     "default_popup": "popup.html",
-    "default_title": "PhishGuard",
-    "default_icon": {
-      "16": "icons/icon16.png",
-      "32": "icons/icon32.png",
-      "48": "icons/icon48.png",
-      "128": "icons/icon128.png"
-    }
+    "default_title": "RUDRAKSHA"
   },
-  "icons": {
-    "16": "icons/icon16.png",
-    "32": "icons/icon32.png",
-    "48": "icons/icon48.png",
-    "128": "icons/icon128.png"
-  },
-  "web_accessible_resources": [
+  "content_scripts": [
     {
-      "resources": ["injected.js"],
-      "matches": ["<all_urls>"]
+      "matches": ["http://*/*", "https://*/*"],
+      "js": ["content.js"],
+      "run_at": "document_start"
     }
   ],
   "content_security_policy": {

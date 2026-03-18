@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>User Dashboard - Rudraksha: The Saviour</title>
+    <title>User Dashboard - RUDRAKSHA: The Saviour</title>
     <link rel="stylesheet" href="css/user-dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -20,7 +20,7 @@
                             <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <h2>Rudraksha</h2>
+                    <h2>RUDRAKSHA</h2>
                 </div>
             </div>
             
@@ -301,45 +301,45 @@
                         <div class="report-card">
                             <div class="report-header">
                                 <h3>Monthly Security Summary</h3>
-                                <span class="report-date">January 2025</span>
+                                <span id="monthlyReportDate" class="report-date">Current Month</span>
                             </div>
                             <div class="report-stats">
                                 <div class="report-stat">
                                     <span class="stat-label">Total Scans</span>
-                                    <span class="stat-value">47</span>
+                                    <span id="monthlyTotalScans" class="stat-value">0</span>
                                 </div>
                                 <div class="report-stat">
                                     <span class="stat-label">Threats Detected</span>
-                                    <span class="stat-value">3</span>
+                                    <span id="monthlyThreats" class="stat-value">0</span>
                                 </div>
                                 <div class="report-stat">
                                     <span class="stat-label">Success Rate</span>
-                                    <span class="stat-value">93.6%</span>
+                                    <span id="monthlySuccessRate" class="stat-value">0.0%</span>
                                 </div>
                             </div>
-                            <button class="btn btn-secondary" onclick="downloadReport('monthly')">Download PDF</button>
+                            <button class="btn btn-secondary" onclick="downloadReport('monthly')">Download CSV</button>
                         </div>
                         
                         <div class="report-card">
                             <div class="report-header">
                                 <h3>Weekly Activity Report</h3>
-                                <span class="report-date">Week 2, Jan 2025</span>
+                                <span id="weeklyReportDate" class="report-date">Current Week</span>
                             </div>
                             <div class="report-stats">
                                 <div class="report-stat">
                                     <span class="stat-label">Scans This Week</span>
-                                    <span class="stat-value">12</span>
+                                    <span id="weeklyScans" class="stat-value">0</span>
                                 </div>
                                 <div class="report-stat">
                                     <span class="stat-label">New Threats</span>
-                                    <span class="stat-value">1</span>
+                                    <span id="weeklyThreats" class="stat-value">0</span>
                                 </div>
                                 <div class="report-stat">
                                     <span class="stat-label">Most Scanned</span>
-                                    <span class="stat-value">google.com</span>
+                                    <span id="weeklyMostScanned" class="stat-value">N/A</span>
                                 </div>
                             </div>
-                            <button class="btn btn-secondary" onclick="downloadReport('weekly')">Download PDF</button>
+                            <button class="btn btn-secondary" onclick="downloadReport('weekly')">Download CSV</button>
                         </div>
                     </div>
                 </section>

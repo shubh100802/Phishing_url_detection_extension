@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Dashboard - Rudraksha: The Saviour</title>
+    <title>Admin Dashboard - RUDRAKSHA: The Saviour</title>
     <link rel="stylesheet" href="css/admin-dashboard.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 </head>
@@ -20,7 +20,7 @@
                             <path d="M2 12L12 17L22 12" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
                         </svg>
                     </div>
-                    <h2>Rudraksha</h2>
+                    <h2>RUDRAKSHA</h2>
                 </div>
             </div>
             
@@ -215,15 +215,11 @@
                     <div class="charts-container">
                         <div class="chart-card">
                             <h3>Threat Detection Trends</h3>
-                            <div class="chart-placeholder">
-                                <p>Chart visualization will be implemented here</p>
-                            </div>
+                            <canvas id="trendChart" height="220"></canvas>
                         </div>
                         <div class="chart-card">
-                            <h3>Geographic Distribution</h3>
-                            <div class="chart-placeholder">
-                                <p>Map visualization will be implemented here</p>
-                            </div>
+                            <h3>Threat Level Distribution</h3>
+                            <canvas id="levelChart" height="220"></canvas>
                         </div>
                     </div>
                 </section>
@@ -355,8 +351,9 @@
 
     <div id="userModal" class="modal" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.5); z-index:10000;">
       <div style="max-width:480px; margin:10% auto; background:#111827; color:#fff; padding:1.5rem; border-radius:12px;">
-        <h3 style="margin:0 0 1rem 0;">Add New User</h3>
+        <h3 id="userModalTitle" style="margin:0 0 1rem 0;">Add New User</h3>
         <form id="userForm">
+          <input type="hidden" id="userIdInput" />
           <div style="margin-bottom:0.75rem;">
             <label>Name</label>
             <input id="userNameInput" type="text" required style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;" />
@@ -372,9 +369,20 @@
               <option value="admin">Admin</option>
             </select>
           </div>
+          <div style="margin-bottom:0.75rem;">
+            <label>Status</label>
+            <select id="userStatusInput" style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;">
+              <option value="active">Active</option>
+              <option value="suspended">Suspended</option>
+            </select>
+          </div>
+          <div style="margin-bottom:0.75rem;">
+            <label>Password (required for new user)</label>
+            <input id="userPasswordInput" type="password" minlength="6" placeholder="Enter password" style="width:100%; padding:0.5rem; border-radius:8px; border:1px solid #374151; background:#0b1220; color:#fff;" />
+          </div>
           <div style="display:flex; justify-content:flex-end; gap:0.5rem;">
             <button type="button" id="userCancelBtn" class="btn">Cancel</button>
-            <button type="submit" class="btn btn-primary">Create</button>
+            <button id="userSubmitBtn" type="submit" class="btn btn-primary">Create</button>
           </div>
         </form>
       </div>

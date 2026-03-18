@@ -1,4 +1,4 @@
-# Rudraksha: The Saviour - Frontend Dashboard System
+# RUDRAKSHA: The Saviour - Frontend Dashboard System
 
 ## Overview
 This is a comprehensive frontend system for a phishing detection platform with separate admin and user dashboards. The system provides role-based access control with modern, responsive interfaces.

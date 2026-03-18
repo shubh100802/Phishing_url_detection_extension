@@ -4,7 +4,7 @@ RUDRAKSHA: PHISHING DETECTION SYSTEM - ENHANCED PROJECT OVERVIEW
 
 PROJECT OVERVIEW
 ===============
-Rudraksha is a comprehensive, full-stack phishing detection system designed to provide real-time URL scanning, threat management, and user-friendly dashboards. Built with modern web technologies, it offers role-based authentication, analytics, and extensible architecture for future enhancements like machine learning integration and browser extensions.
+RUDRAKSHA is a comprehensive, full-stack phishing detection system designed to provide real-time URL scanning, threat management, and user-friendly dashboards. Built with modern web technologies, it offers role-based authentication, analytics, and extensible architecture for future enhancements like machine learning integration and browser extensions.
 
 **Key Features:**
 - **Real-time URL Scanning:** Heuristic-based risk assessment with configurable depth (quick/standard/deep).
@@ -319,4 +319,4 @@ KEY TECHNICAL DETAILS (ENHANCED)
 - Bachhav Ujjwal Ganesh: Database modeling, API controllers.
 - Vikash Kumar Singh: Testing, documentation, deployment.
 
-This enhanced overview provides a deeper dive into Rudraksha's architecture, implementation, and roadmap, serving as a comprehensive guide for developers, maintainers, and contributors.
+This enhanced overview provides a deeper dive into RUDRAKSHA's architecture, implementation, and roadmap, serving as a comprehensive guide for developers, maintainers, and contributors.

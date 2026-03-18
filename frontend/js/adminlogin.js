@@ -83,7 +83,7 @@ document.addEventListener('DOMContentLoaded', function() {
 
             // Remember only the username locally if requested (never store password)
             if (remember) {
-                saveCredentials(username, '');
+                saveCredentials(username);
             } else {
                 clearSavedCredentials();
             }
@@ -229,10 +229,9 @@ document.addEventListener('DOMContentLoaded', function() {
     }
 
     // Save credentials to localStorage
-    function saveCredentials(username, password) {
+    function saveCredentials(username) {
         try {
             localStorage.setItem('admin_username', username);
-            localStorage.setItem('admin_password', password);
             localStorage.setItem('admin_remember', 'true');
         } catch (e) {
             console.warn('Could not save credentials:', e);
@@ -243,12 +242,10 @@ document.addEventListener('DOMContentLoaded', function() {
     function loadSavedCredentials() {
         try {
             const savedUsername = localStorage.getItem('admin_username');
-            const savedPassword = localStorage.getItem('admin_password');
             const savedRemember = localStorage.getItem('admin_remember');
             
-            if (savedUsername && savedPassword && savedRemember === 'true') {
+            if (savedUsername && savedRemember === 'true') {
                 usernameInput.value = savedUsername;
-                passwordInput.value = savedPassword;
                 rememberCheckbox.checked = true;
             }
         } catch (e) {
@@ -260,7 +257,6 @@ document.addEventListener('DOMContentLoaded', function() {
     function clearSavedCredentials() {
         try {
             localStorage.removeItem('admin_username');
-            localStorage.removeItem('admin_password');
             localStorage.removeItem('admin_remember');
         } catch (e) {
             console.warn('Could not clear saved credentials:', e);
@@ -338,9 +334,8 @@ document.addEventListener('DOMContentLoaded', function() {
             autoSaveTimeout = setTimeout(() => {
                 if (rememberCheckbox.checked) {
                     const username = usernameInput.value.trim();
-                    const password = passwordInput.value.trim();
-                    if (username && password) {
-                        saveCredentials(username, password);
+                    if (username) {
+                        saveCredentials(username);
                     }
                 }
             }, 1000);
