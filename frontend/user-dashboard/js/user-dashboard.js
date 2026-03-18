@@ -394,7 +394,7 @@ function saveToHistory() {
 }
 
 function shareResult(url, status) {
-  const message = `I scanned ${url} using RUDRAKSHA. Result: ${status}`;
+  const message = `I scanned ${url} using RUDRAKSHA: The Saviour. Result: ${status}`;
   if (navigator.share) {
     navigator.share({ title: 'URL Scan Result', text: message, url: window.location.href });
   } else if (navigator.clipboard) {
@@ -445,7 +445,7 @@ function downloadReport(type) {
     .join('\n');
 
   const blob = new Blob([csv], { type: 'text/csv;charset=utf-8;' });
-  const fileName = `RUDRAKSHA-${type || 'report'}-${new Date().toISOString().slice(0, 10)}.csv`;
+  const fileName = `RUDRAKSHA-The-Saviour-${type || 'report'}-${new Date().toISOString().slice(0, 10)}.csv`;
   const url = URL.createObjectURL(blob);
   const a = document.createElement('a');
   a.href = url;

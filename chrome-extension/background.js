@@ -1,6 +1,4 @@
 const API_BASES = ['http://localhost:3001', 'http://localhost:3000'];
-const scannedCache = new Map();
-const RESCAN_COOLDOWN_MS = 2 * 60 * 1000;
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message?.type === 'scanUrl') {
@@ -15,28 +13,6 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
 chrome.runtime.onMessage.addListener((message) => {
   if (message?.type !== 'scanResult') return;
   handleScanResult(message.payload || {});
-});
-
-chrome.tabs.onUpdated.addListener(async (tabId, changeInfo, tab) => {
-  if (changeInfo.status !== 'complete') return;
-  const url = tab?.url || '';
-  if (!/^https?:\/\//i.test(url)) return;
-
-  const now = Date.now();
-  const last = scannedCache.get(url) || 0;
-  if (now - last < RESCAN_COOLDOWN_MS) return;
-  scannedCache.set(url, now);
-
-  try {
-    const data = await postPublicScan({ url, deepScan: true });
-    const payload = { url, verdict: data.verdict, riskScore: data.riskScore };
-    handleScanResult(payload);
-    if (data.verdict === 'malicious' || data.verdict === 'suspicious') {
-      chrome.tabs.sendMessage(tabId, { type: 'rudrakshaWarning', payload });
-    }
-  } catch {
-    // backend unavailable, skip quietly
-  }
 });
 
 async function postPublicScan(payload) {

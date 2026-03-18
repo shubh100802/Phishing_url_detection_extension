@@ -1,16 +1,26 @@
 {
   "manifest_version": 3,
-  "name": "RUDRAKSHA - Phishing Detection",
+  "name": "RUDRAKSHA: The Saviour",
   "version": "1.1.0",
-  "description": "Quick phishing URL scanning with RUDRAKSHA backend.",
+  "description": "Quick phishing URL scanning with RUDRAKSHA: The Saviour backend.",
   "permissions": ["activeTab", "tabs", "storage", "notifications"],
+  "icons": {
+    "16": "icons/icon16.png",
+    "48": "icons/icon48.png",
+    "128": "icons/icon128.png"
+  },
   "host_permissions": ["http://localhost:3000/*", "http://localhost:3001/*", "https://*/*", "http://*/*"],
   "background": {
     "service_worker": "background.js"
   },
   "action": {
     "default_popup": "popup.html",
-    "default_title": "RUDRAKSHA"
+    "default_title": "RUDRAKSHA: The Saviour",
+    "default_icon": {
+      "16": "icons/icon16.png",
+      "48": "icons/icon48.png",
+      "128": "icons/icon128.png"
+    }
   },
   "content_scripts": [
     {
