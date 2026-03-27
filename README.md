@@ -216,4 +216,4 @@ Built for practical phishing protection workflows with extension-first intercept
 
 ---
 
- ***Made with ❤️ By Shubh***
+ ***Made with ❤️ By Shubham Raj Sharma and Friends(Rudraksha)***
