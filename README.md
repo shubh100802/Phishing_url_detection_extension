@@ -25,7 +25,7 @@
 
 The backend currently uses a **heuristic risk engine** (no external paid API required to run locally).
 
-ML Modal is trained by Joy: https://github.com/Atomic-Joy/URL-Phishing-Detection-Model.git
+ML Model is trained by [Joy](https://github.com/Atomic-Joy): https://github.com/Atomic-Joy/URL-Phishing-Detection-Model.git
 
 ## Core Features
 
@@ -67,6 +67,7 @@ Capstone/
 |  |- popup.html
 |  |- popup.js
 |  `- icons/
+|- ModelTraining.ipynb
 |- .env
 |- env.example
 `- package.json
